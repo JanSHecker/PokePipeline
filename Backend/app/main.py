@@ -2,7 +2,8 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from . import models, schemas, crud, database
-from .graphql import graphql_app  # ⬅️ Import this
+from .graphql.schema import schema
+from strawberry.fastapi import GraphQLRouter
 
 models.Base.metadata.create_all(bind=database.engine)
 
@@ -13,5 +14,6 @@ app.add_middleware(
     allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"],
 )
 
+graphql_app = GraphQLRouter(schema)
 app.include_router(graphql_app, prefix="/graphql") 
 

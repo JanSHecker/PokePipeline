@@ -49,15 +49,22 @@
         async function addPokemon() {
             const query = `
                 mutation {
-                addPokemon {
-                    id
-                    name
-                }
+                    addPokemon 
                 }
             `;
             const data = await graphqlRequest(query);
             loadPokemon();
             }
+        async function deleteAllPokemon() {
+            const query = `
+                mutation {
+                    deleteAllPokemon
+                }
+            `;
+            const data = await graphqlRequest(query);
+            loadPokemon();
+            }
+
 
         loadPokemon();
     </script>
