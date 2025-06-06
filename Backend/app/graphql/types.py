@@ -42,6 +42,9 @@ class MoveType:
 class TypeType:
     id: int
     name: str
+    power: int
+    accuracy: int
+    pp: int
 
     @strawberry.field
     def moves(self, info: Info) -> List["MoveType"]:
