@@ -14,6 +14,7 @@ def create_pokemon(db: Session, pokemon: schemas.PokemonCreate):
 def add_pokemons_from_api(db: Session, pokemons):
     for pokemon in pokemons:
             pokemon_id = pokemon["id"]
+
         # Check if Pokémon already exists
             existing_pokemon = db.query(models.Pokemon).filter_by(id=pokemon_id).first()
             if existing_pokemon:
@@ -30,6 +31,7 @@ def add_pokemons_from_api(db: Session, pokemons):
                 type_data = t["pokemon_v2_type"]
                 type_id = type_data["id"]
                 type_obj = db.query(models.Type).filter_by(id=type_id).first()
+            #check if type already exists
                 if not type_obj:
                     type_obj = models.Type(id=type_id, name=type_data.get("name"))
                     db.add(type_obj)
@@ -41,6 +43,7 @@ def add_pokemons_from_api(db: Session, pokemons):
                 move_data = m["pokemon_v2_move"]
                 move_id= move_data["id"]
                 move_obj = db.query(models.Move).filter_by(id=move_id).first()
+                #check if move already exists
                 if not move_obj:
                     move_type_id = move_data["pokemon_v2_type"]["id"] if move_data["pokemon_v2_type"] else None
                     move_type = None

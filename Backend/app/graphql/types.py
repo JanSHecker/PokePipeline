@@ -1,5 +1,5 @@
 import strawberry
-from typing import List
+from typing import List,Optional
 from strawberry.types import Info
 from app import models, database
 
@@ -18,12 +18,21 @@ class PokemonType:
     def moves(self, info: Info) -> List["MoveType"]:
         db = next(database.get_db())
         pokemon = db.query(models.Pokemon).filter(models.Pokemon.id == self.id).first()
-        return [MoveType(id=m.id, name=m.name) for m in pokemon.moves]
+        return [MoveType(
+                id=m.id,
+                name=m.name,
+                power=m.power,
+                accuracy=m.accuracy,
+                pp=m.pp,
+            ) for m in pokemon.moves]
 
 @strawberry.type
 class MoveType:
     id: int
     name: str
+    power: Optional[int]
+    accuracy: Optional[int]
+    pp: Optional[int]
 
     @strawberry.field
     def type(self, info: Info) -> "TypeType":
@@ -42,15 +51,19 @@ class MoveType:
 class TypeType:
     id: int
     name: str
-    power: int
-    accuracy: int
-    pp: int
+
 
     @strawberry.field
     def moves(self, info: Info) -> List["MoveType"]:
         db = next(database.get_db())
         type_obj = db.query(models.Type).filter(models.Type.id == self.id).first()
-        return [MoveType(id=m.id, name=m.name) for m in type_obj.moves]
+        return [MoveType(
+            id=m.id,
+            name=m.name,
+            power=m.power,
+            accuracy=m.accuracy,
+            pp=m.pp,
+            ) for m in type_obj.moves]
 
     @strawberry.field
     def pokemons(self, info: Info) -> List["PokemonType"]:
