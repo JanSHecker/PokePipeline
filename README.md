@@ -10,6 +10,8 @@ You can then access the frontendpage on http://localhost:80
 You can access adminer on http://localhost:8080 (login with postgres/postgres)
 You can access the strawberry graphQL WebUI on http://localhost:8000/graphql
 
+On the frontend you can press a button to add random new Pokemon through the api. Each Pokemon is displayes with its number and types and an additional button that will load its moves in into a second list with its details.
+
 iii. Design Choices
 
 At the core of my databse schema i created 3 tables for Pokemon, Types and Moves. I choose those 3 as base because they have the most interesting relationship between each other. Each Pokemon has both moves and types. Each Type has both Pokemon and moves. And each move has Pokemon its learned by and a type.
@@ -23,4 +25,4 @@ Entrees of Pokemon are considered as their type of pokemon not an instance of a 
 v. Future Additions
 
 The pipeline could be expanded in the future by including more columns into the database.
-Also the frontend could be expanded possibly using a framework like react. This includes allowing for advanced sorting and filtering etc.
+Also the frontend could be expanded possibly using a framework like react. Possible expansions are search and filtering as well as type and move centric views that allow to look for e.g. all pokemon and moves associated with a type.
