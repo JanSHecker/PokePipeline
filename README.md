@@ -1,6 +1,6 @@
 i. Project Description
 
-This fastAPI project utilizes the PokeAPI to populate a postgres database with Pokemon, their types and their moves. The app also has a frontend where the pipeline is started and data is displayed.
+This fastAPI project utilizes the PokeAPI to populate a postgres database with Pokemon, their types and their moves. The app also has a frontend where the pipeline is started and data is displayed. This frontend is styled with tailwind CSS.
 The app has graphQL endpoints that can also be accessed through the strawberry WebUI and the contents of the database can be accessed through adminer.
 
 ii. How to run
@@ -26,3 +26,5 @@ v. Future Additions
 
 The pipeline could be expanded in the future by including more columns into the database.
 Also the frontend could be expanded possibly using a framework like react. Possible expansions are search and filtering as well as type and move centric views that allow to look for e.g. all pokemon and moves associated with a type.
+Include images from pokeapi like pokemon sprites to display in the frontend.
+I would also refactor the code in crud.py especially the rather large "add_pokemon_from_api". I would change it to have and reuse dedicated methods for the creation of each database entity.
