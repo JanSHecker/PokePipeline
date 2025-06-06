@@ -59,18 +59,21 @@ class Mutation:
 
         if response.status_code == 200:
             pokemons = response.json()["data"]["pokemon_v2_pokemon"]
-            for p in pokemons:
+            for pokemon in pokemons:
+                pokemon_id = pokemon["id"]
             # Check if Pokémon already exists
-                existing_pokemon = db.query(models.Pokemon).filter_by(id=p["id"]).first()
+                existing_pokemon = db.query(models.Pokemon).filter_by(id=pokemon_id).first()
                 if existing_pokemon:
                     continue
 
                 # Create Pokémon
-                pokemon = models.Pokemon(id=p["id"], name=p["name"])
-                db.add(pokemon)
+                pokemon_obj = models.Pokemon(
+                    id=pokemon_id,
+                    name=pokemon.get("name"))
+                db.add(pokemon_obj)
 
                 # Add types
-                for t in p["pokemon_v2_pokemontypes"]:
+                for t in pokemon["pokemon_v2_pokemontypes"]:
                     type_data = t["pokemon_v2_type"]
                     type_id = type_data["id"]
                     type_obj = db.query(models.Type).filter_by(id=type_id).first()
@@ -78,10 +81,10 @@ class Mutation:
                         type_obj = models.Type(id=type_id, name=type_data.get("name"))
                         db.add(type_obj)
                         db.flush()
-                    pokemon.types.append(type_obj)
+                    pokemon_obj.types.append(type_obj)
 
                 # Add moves
-                for m in p["pokemon_v2_pokemonmoves"]:
+                for m in pokemon["pokemon_v2_pokemonmoves"]:
                     move_data = m["pokemon_v2_move"]
                     move_id= move_data["id"]
                     move_obj = db.query(models.Move).filter_by(id=move_id).first()
@@ -105,7 +108,7 @@ class Mutation:
                         db.add(move_obj)
                         db.flush()
 
-                    pokemon.moves.append(move_obj)
+                    pokemon_obj.moves.append(move_obj)
 
             db.commit()
             return True
