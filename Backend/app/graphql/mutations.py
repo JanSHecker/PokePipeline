@@ -17,12 +17,9 @@ class Mutation:
     @strawberry.mutation
     def add_pokemon(self, info: Info) -> bool:
         db = next(database.get_db())
-
         num_pokemon = 15
         total_pokemon = 1118 
         random_ids = random.sample(range(1, total_pokemon + 1), num_pokemon)
-
-
         query = f"""
         query {{
         pokemon_v2_pokemon(where: {{id: {{_in: {random_ids}}}}}) {{
