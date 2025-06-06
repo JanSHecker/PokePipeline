@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PokePipeline</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
+  <h1 class="text-3xl font-bold mb-6 text-gray-800">Pokemon List</h1>
+  
+  <ul id="item-list" class="w-full max-w-md bg-white rounded shadow p-4 mb-6 space-y-2"></ul>
+  
+  <div class="w-full max-w-md flex space-x-2 mt-4">
+  <button onclick="deleteAllPokemon()" 
+          class="bg-red-600 text-white px-4 rounded hover:bg-red-700 transition flex-grow">
+    Delete All Items
+  </button>
+  <button onclick="addPokemon()" 
+          class="bg-yellow-500 text-white px-4 rounded hover:bg-yellow-600 transition flex-grow">
+    Add 10 Pokemon
+  </button>
+</div>
+    <script>
+        const graphqlEndpoint = 'http://localhost:8000/graphql';
+
+        async function graphqlRequest(query, variables = {}) {
+            const res = await fetch(graphqlEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query, variables })
+            });
+            const json = await res.json();
+            return json.data;
+        }
+        async function loadPokemon() {
+            const query = `
+            query {
+                pokemons {
+                id
+                name
+                }
+            }
+            `;
+            const data = await graphqlRequest(query);
+            document.getElementById('item-list').innerHTML =
+            data.pokemons.map(item => `<li>${item.name}</li>`).join('');
+
+        }
+
+        async function addPokemon() {
+            const query = `
+                mutation {
+                addPokemon {
+                    id
+                    name
+                }
+                }
+            `;
+            const data = await graphqlRequest(query);
+            loadPokemon();
+            }
+
+        loadPokemon();
+    </script>
+</body>
+</html>
