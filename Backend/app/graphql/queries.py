@@ -6,11 +6,13 @@ from sqlalchemy.orm import Session
 
 @strawberry.type
 class Query:
+    #This Querries over all Pokemon
     @strawberry.field
     def pokemons(self, info) -> List[PokemonType]:
         db = next(database.get_db())
         pokemons = db.query(models.Pokemon).all()
         return [PokemonType(id=p.id, name=p.name) for p in pokemons]
+    #This returns a Pokemon by id
     @strawberry.field
     def pokemon(self, info, id: int) -> PokemonType:
         db = next(database.get_db())
@@ -18,12 +20,13 @@ class Query:
         if not p:
             raise Exception("Pokemon not found")
         return PokemonType(id=p.id, name=p.name)
+    #This Querries over all Types
     @strawberry.field
     def types(self, info) -> List[TypeType]:
         db = next(database.get_db())
         types = db.query(models.Type).all()
         return [TypeType(id=t.id, name=t.name) for t in types]
-
+    #This Querries over all moves
     @strawberry.field
     def moves(self, info) -> List[MoveType]:
         db = next(database.get_db())

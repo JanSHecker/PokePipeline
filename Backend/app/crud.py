@@ -11,6 +11,10 @@ def create_pokemon(db: Session, pokemon: schemas.PokemonCreate):
     db.refresh(db_pokemon)
     return db_pokemon
 
+
+
+
+# This takes the data that is returned by the API that is largerly in the correct format due to graphql and creates new database objects
 def add_pokemons_from_api(db: Session, pokemons):
     for pokemon in pokemons:
             pokemon_id = pokemon["id"]

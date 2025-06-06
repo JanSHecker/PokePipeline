@@ -7,12 +7,14 @@ from .types import PokemonType
 
 @strawberry.type
 class Mutation:
+    #deletes all Pokemon from the database
     @strawberry.mutation
     def delete_all_pokemon(self, info: Info) -> bool:
         db = next(database.get_db())
         db.query(models.Pokemon).delete()
         db.commit()
         return True
+    #pulls new Pokemon from the API
     @strawberry.mutation
     def add_pokemon(self, info: Info) -> bool:
         db = next(database.get_db())

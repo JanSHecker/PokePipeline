@@ -1,7 +1,7 @@
 import httpx
 import random
 
-
+#Makes the request to PokeAPI for new Pokemon using a set of random pokemon ids
 def getPokeAPIdata():
     num_pokemon = 15
     total_pokemon = 1118 
