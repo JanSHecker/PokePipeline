@@ -11,7 +11,13 @@ class Query:
         db = next(database.get_db())
         pokemons = db.query(models.Pokemon).all()
         return [PokemonType(id=p.id, name=p.name) for p in pokemons]
-
+    @strawberry.field
+    def pokemon(self, info, id: int) -> PokemonType:
+        db = next(database.get_db())
+        p = db.query(models.Pokemon).filter_by(id=id).first()
+        if not p:
+            raise Exception("Pokemon not found")
+        return PokemonType(id=p.id, name=p.name)
     @strawberry.field
     def types(self, info) -> List[TypeType]:
         db = next(database.get_db())

@@ -23,4 +23,4 @@ Entrees of Pokemon are considered as their type of pokemon not an instance of a 
 v. Future Additions
 
 The pipeline could be expanded in the future by including more columns into the database.
-Also the frontend could be expanded possibly using a framework like react
+Also the frontend could be expanded possibly using a framework like react. This includes allowing for advanced sorting and filtering etc.

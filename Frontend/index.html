@@ -1,72 +1,116 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
   <title>PokePipeline</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
   <h1 class="text-3xl font-bold mb-6 text-gray-800">Pokemon List</h1>
   
-  <ul id="item-list" class="w-full max-w-md bg-white rounded shadow p-4 mb-6 space-y-2"></ul>
+  <div class="flex w-full max-w-4xl gap-6">
+    <!-- Pokemon List container -->
+    <ul id="item-list" class="w-1/2 bg-white rounded shadow p-4 space-y-2 max-h-[800px] overflow-y-auto"></ul>
+    
+    <!-- Moves List container -->
+    <ul id="move-list" class="w-1/2 bg-white rounded shadow p-4 space-y-2 max-h-[800px] overflow-y-auto"></ul>
+  </div>
   
-  <div class="w-full max-w-md flex space-x-2 mt-4">
-  <button onclick="deleteAllPokemon()" 
-          class="bg-red-600 text-white px-4 rounded hover:bg-red-700 transition flex-grow">
-    Delete All Items
-  </button>
-  <button onclick="addPokemon()" 
-          class="bg-yellow-500 text-white px-4 rounded hover:bg-yellow-600 transition flex-grow">
-    add new pokemon from PokeAPI
-  </button>
-</div>
-    <script>
-        const graphqlEndpoint = 'http://localhost:8000/graphql';
+  <div class="w-full max-w-md flex space-x-2 mt-6">
+    <button onclick="deleteAllPokemon()" 
+            class="bg-red-600 text-white px-4 rounded hover:bg-red-700 transition flex-grow">
+      Delete All Items
+    </button>
+    <button onclick="addPokemon()" 
+            class="bg-yellow-500 text-white px-4 rounded hover:bg-yellow-600 transition flex-grow">
+      Add new Pokemon from PokeAPI
+    </button>
+  </div>
 
-        async function graphqlRequest(query, variables = {}) {
-            const res = await fetch(graphqlEndpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query, variables })
-            });
-            const json = await res.json();
-            return json.data;
+  <script>
+    const graphqlEndpoint = 'http://localhost:8000/graphql';
+
+    async function graphqlRequest(query, variables = {}) {
+      const res = await fetch(graphqlEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, variables })
+      });
+      const json = await res.json();
+      return json.data;
+    }
+
+    async function loadPokemon() {
+      const query = `
+        query {
+          pokemons {
+            id
+            name
+            types {
+              name
+            }
+          }
         }
-        async function loadPokemon() {
-            const query = `
+      `;
+      const data = await graphqlRequest(query);
+      const list = document.getElementById('item-list');
+      list.innerHTML = data.pokemons.map(pokemon => `
+        <li class="border-b pb-2">
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="font-semibold">#${pokemon.id}</span> 
+              ${pokemon.name} 
+              <span class="text-sm text-gray-500">[${pokemon.types.map(t => t.name).join(', ')}]</span>
+            </div>
+            <button onclick="showMoves(${pokemon.id})" class="text-blue-600 hover:underline text-sm">
+              Show Moves
+            </button>
+          </div>
+        </li>
+      `).join('');
+    }
+
+    async function showMoves(pokemonId) {
+        const query = `
             query {
-                pokemons {
-                id
+            pokemon(id: ${pokemonId}) {
+                moves {
                 name
+                power
+                accuracy
+                pp
                 }
             }
-            `;
-            const data = await graphqlRequest(query);
-            document.getElementById('item-list').innerHTML =
-            data.pokemons.map(item => `<li>${item.name}</li>`).join('');
-
+            }
+        `;
+        const data = await graphqlRequest(query);
+        const moveList = document.getElementById('move-list');
+        moveList.innerHTML = data.pokemon.moves.map(move => `
+            <li>
+            <strong>${move.name}</strong> 
+            <div class="text-sm text-gray-500">
+                Power: ${move.power != null ? move.power : '—'}, 
+                Accuracy: ${move.accuracy != null ? move.accuracy : '—'}, 
+                PP: ${move.pp != null ? move.pp : '—'}
+            </div>
+            </li>
+        `).join('');
         }
 
-        async function addPokemon() {
-            const query = `
-                mutation {
-                    addPokemon 
-                }
-            `;
-            const data = await graphqlRequest(query);
-            loadPokemon();
-            }
-        async function deleteAllPokemon() {
-            const query = `
-                mutation {
-                    deleteAllPokemon
-                }
-            `;
-            const data = await graphqlRequest(query);
-            loadPokemon();
-            }
+    async function addPokemon() {
+      const query = `mutation { addPokemon }`;
+      await graphqlRequest(query);
+      loadPokemon();
+    }
 
+    async function deleteAllPokemon() {
+      const query = `mutation { deleteAllPokemon }`;
+      await graphqlRequest(query);
+      loadPokemon();
+      document.getElementById('move-list').innerHTML = '';
+    }
 
-        loadPokemon();
-    </script>
+    loadPokemon();
+  </script>
 </body>
 </html>
